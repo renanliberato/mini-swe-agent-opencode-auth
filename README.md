@@ -96,6 +96,30 @@ MSWEA_GLM_MODEL=glm-5.2 \
   MSWEA_SUBSCRIPTION=glm mini --model opencode-subscription
 ```
 
+## Setting reasoning effort
+
+Pass LiteLLM's `reasoning_effort` through mini's model configuration. The
+available values depend on the model; for example, Codex models commonly
+support `low`, `medium`, and `high`:
+
+```sh
+MSWEA_SUBSCRIPTION=codex \
+  mini --model gpt-5.6-luna \
+  -c mini.yaml \
+  -c model.model_kwargs.reasoning_effort=high
+```
+
+Other examples:
+
+```sh
+mini --model gpt-5.6-luna -c mini.yaml -c model.model_kwargs.reasoning_effort=low
+mini --model gpt-5.6-luna -c mini.yaml -c model.model_kwargs.reasoning_effort=medium
+```
+
+Use `reasoning_effort`, not opencode's catalog spelling `reasoningEffort`.
+The explicit `-c mini.yaml` is intentional: when using `-c`, mini requires
+the default config to be included before the override.
+
 ## Security notes
 
 - Keep `~/.local/share/opencode/auth.json` private.

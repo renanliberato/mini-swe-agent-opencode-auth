@@ -45,14 +45,14 @@ Install mini-SWE-agent and this adapter into the same Python environment:
 ```sh
 pipx install mini-swe-agent
 pipx inject mini-swe-agent \
-  git+https://github.com/renanliberato/bring-opencode-auth-to-mini-swe-agent.git
+  git+https://github.com/renanliberato/mini-swe-agent-opencode-auth.git
 ```
 
 Or install from a checkout:
 
 ```sh
-git clone https://github.com/renanliberato/bring-opencode-auth-to-mini-swe-agent.git
-cd bring-opencode-auth-to-mini-swe-agent
+git clone https://github.com/renanliberato/mini-swe-agent-opencode-auth.git
+cd mini-swe-agent-opencode-auth
 pip install -e .
 ```
 

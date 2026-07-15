@@ -4,13 +4,16 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "bring-opencode-auth-to-mini-swe-agent"
-version = "0.1.0"
+version = "0.2.0"
 description = "Bring opencode authentication and subscriptions to mini-SWE-agent"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
 authors = [{ name = "Renan Liberato" }]
 dependencies = ["mini-swe-agent>=2.4.5"]
+
+[project.scripts]
+mswea = "minisweagent_opencode_auth.cli:main"
 
 [tool.setuptools]
 packages = ["minisweagent_opencode_auth"]

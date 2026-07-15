@@ -4,13 +4,13 @@ Use the subscriptions already configured in [opencode](https://opencode.ai/)
 from [mini-SWE-agent](https://github.com/SWE-agent/mini-swe-agent), without
 copying API keys into another dotenv file.
 
-Switch between Codex, OpenCode Go, and Z.AI Coding Plan with one environment
-variable:
+Switch between Codex, OpenCode Go, and Z.AI Coding Plan with one explicit
+selector:
 
 ```sh
-MSWEA_SUBSCRIPTION=codex mini
-MSWEA_SUBSCRIPTION=opencode-go mini
-MSWEA_SUBSCRIPTION=glm mini
+mswea codex:gpt-5.6-luna@high
+mswea opencode-go:glm-5.2@medium
+mswea glm:glm-5.2@low
 ```
 
 ## Why this exists
@@ -56,6 +56,13 @@ cd mini-swe-agent-opencode-auth
 pip install -e .
 ```
 
+For this machine's uv-managed mini installation, use the installer from the
+checkout. It installs or updates `mswea` in `~/.local/bin`:
+
+```sh
+./install.sh
+```
+
 Authenticate providers in opencode first:
 
 ```sh
@@ -63,15 +70,28 @@ opencode auth login
 opencode auth list
 ```
 
-Then pass the adapter as mini's model class:
+The selector chooses the provider, model, and optional reasoning effort. All
+remaining arguments are passed directly to mini-SWE-agent:
 
 ```sh
-mini \
-  --model opencode-subscription \
-  --model-class minisweagent_opencode_auth.OpenCodeSubscriptionsModel
+mswea codex:gpt-5.6-luna@high --yolo
+mswea glm:glm-5.2@medium -t "Fix the failing tests"
+mswea opencode-go:glm-5.2@low -- --cost-limit 1
 ```
 
-For convenience, configure mini's global environment file with:
+The explicit selector grammar is:
+
+```text
+provider:model[@reasoning-effort]
+```
+
+Provider aliases are accepted: `openai` means `codex`, `go` means
+`opencode-go`, and `zai` / `glm-coding-ai` mean `glm`. The supported generic
+effort values are `none`, `minimal`, `low`, `medium`, `high`, `xhigh`, and
+`default`; the provider/model may support only a subset.
+
+For a lower-level invocation without the launcher, configure mini's global
+environment file with:
 
 ```dotenv
 MSWEA_MODEL_NAME=opencode-subscription
@@ -83,7 +103,7 @@ MSWEA_COST_TRACKING=ignore_errors
 The stock mini launcher may require `--model-class`; newer/local launchers
 that forward `MSWEA_MODEL_CLASS` can use the dotenv setting directly.
 
-## Choosing models
+## Choosing models without `mswea`
 
 ```sh
 MSWEA_CODEX_MODEL=gpt-5.4 \
@@ -96,7 +116,7 @@ MSWEA_GLM_MODEL=glm-5.2 \
   MSWEA_SUBSCRIPTION=glm mini --model opencode-subscription
 ```
 
-## Setting reasoning effort
+## Setting reasoning effort without `mswea`
 
 Pass LiteLLM's `reasoning_effort` through mini's model configuration. The
 available values depend on the model; for example, Codex models commonly
@@ -119,6 +139,20 @@ mini --model gpt-5.6-luna -c mini.yaml -c model.model_kwargs.reasoning_effort=me
 Use `reasoning_effort`, not opencode's catalog spelling `reasoningEffort`.
 The explicit `-c mini.yaml` is intentional: when using `-c`, mini requires
 the default config to be included before the override.
+
+With `mswea`, the equivalent command is simply:
+
+```sh
+mswea codex:gpt-5.6-luna@high
+```
+
+An explicit mini config override takes precedence over the selector's effort:
+
+```sh
+mswea codex:gpt-5.6-luna@high \
+  -c mini.yaml \
+  -c model.model_kwargs.reasoning_effort=low
+```
 
 ## Security notes
 

@@ -187,6 +187,10 @@ class OpenCodeSubscriptionsModel:
         supplied = dict(model_kwargs or {})
         supplied.pop("api_key", None)
         supplied.pop("api_base", None)
+        if "reasoning_effort" not in supplied:
+            effort = os.getenv("MSWEA_REASONING_EFFORT")
+            if effort:
+                supplied["reasoning_effort"] = effort
 
         if self.subscription == "codex":
             auth = _refresh_codex_if_needed()
